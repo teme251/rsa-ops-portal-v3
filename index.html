@@ -1,57 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Avis RSA-PMS — Operations Portal</title>
   <link rel="stylesheet" href="styles.css">
+  <script>
+    window.BACKEND_URL = "https://script.google.com/macros/s/AKfycbxdegGrWMt0YlWMic9BURoZPczXgWb4Cx5IiXmEp9hJcUpKwVKpNhHU9khNxTKfRX_-Yw/exec";
+  </script>
 </head>
 <body>
   <header>
     <div class="header-inner">
       <div class="brand">Avis RSA-PMS<span class="muted">— Operations Portal</span></div>
+      <div class="row">
+        <input id="search" type="search" placeholder="Search RSA…" />
+      </div>
     </div>
   </header>
 
   <div class="container">
+
+    <!-- Today summary -->
+    <div class="card">
+      <h3 style="margin:0 0 10px 0">Today at a glance</h3>
+      <div class="kpis">
+        <div class="kpi"><div class="label">Ratings Today</div><div class="value" id="kpiTodayCount">—</div></div>
+        <div class="kpi"><div class="label">Avg Score Today</div><div class="value" id="kpiTodayAvg">—</div></div>
+        <div class="kpi"><div class="label">Top Performer Today</div><div class="value" id="kpiTodayTop">—</div></div>
+        <div class="kpi"><div class="label">Customers Served (Today)</div><div class="value" id="kpiTodayCust">—</div></div>
+      </div>
+    </div>
+
+    <!-- Top 3 Good vs Needs Coaching -->
+    <div class="card">
+      <h3 style="margin:0 0 10px 0">Top 3 — Best & Worst (Today)</h3>
+      <div class="grid2">
+        <div>
+          <h4 class="section-sub">Top 3 Best</h4>
+          <ol id="best3"></ol>
+        </div>
+        <div>
+          <h4 class="section-sub">Top 3 Needs Coaching</h4>
+          <ol id="worst3"></ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- RSA list -->
     <div class="card">
       <div class="topbar">
         <h3 style="margin:0">Your RSA List</h3>
-        <input id="search" type="search" placeholder="Search RSA…">
-      </div>
-      <div class="row">
-        <input id="newName" type="text" placeholder="Add associate name" style="flex:1;min-width:220px">
-        <select id="newShift">
-          <option>Morning</option>
-          <option>Evening</option>
-          <option>Overnight</option>
-        </select>
-        <button class="primary" id="addBtn">Add RSA</button>
+        <div class="row">
+          <input id="newName" type="text" placeholder="Add associate name" style="flex:1;min-width:220px">
+          <select id="newShift">
+            <option>Morning</option><option>Evening</option><option>Overnight</option>
+          </select>
+          <button class="primary" id="addBtn">Add RSA</button>
+        </div>
       </div>
       <div class="hr"></div>
       <table class="table">
-        <thead>
-          <tr><th>Associate</th><th>Shift</th><th>Actions</th></tr>
-        </thead>
+        <thead><tr><th>Associate</th><th>Shift</th><th>Actions</th></tr></thead>
         <tbody id="rsaBody"></tbody>
       </table>
       <p id="empty" class="note" style="margin:8px 0 0">No RSAs yet — add someone above.</p>
     </div>
 
+    <!-- Bottom: Weekly & Monthly summaries -->
     <div class="card">
-      <p class="note">
-        This portal is for managers to rate RSAs on a 1–10 scale across defined categories.
-        Submissions are sent securely to the performance backend and you’ll be returned here after each rating.
-      </p>
+      <h3 style="margin:0 0 10px 0">Weekly Summary</h3>
+      <p class="note" id="weeklySummary">—</p>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 10px 0">Monthly Summary</h3>
+      <p class="note" id="monthlySummary">—</p>
     </div>
   </div>
 
   <div class="toast" id="toast">Saved</div>
-
-  <!-- ✅ UPDATED BACKEND URL -->
-  <script>
-    window.BACKEND_URL = "https://script.google.com/macros/s/AKfycbxdegGrWMt0YlWMic9BURoZPczXgWb4Cx5IiXmEp9hJcUpKwVKpNhHU9khNxTKfRX_-Yw/exec";
-  </script>
   <script src="app.js"></script>
 </body>
 </html>
