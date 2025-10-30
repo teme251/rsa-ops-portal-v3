@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rate RSA — 1–10</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="brand">Avis RSA-PMS<span class="muted">— Rate Associate</span></div>
+      <div class="topnav">
+        <button class="ghost" onclick="history.back()">← Back</button>
+        <button class="ghost" onclick="location.href='index.html'">🏠 Home</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div id="who" class="topbar"></div>
+    </div>
+
+    <div class="card">
+      <h3 class="section-title">Category Ratings (1–10)</h3>
+      <div id="ratings" class="rating-grid"></div>
+    </div>
+
+    <div class="card">
+      <h3 class="section-title">Policy & Customer-First Checklist</h3>
+      <div id="checklist" class="rating-grid"></div>
+    </div>
+
+    <div class="card">
+      <h3 class="section-title">Notes</h3>
+      <textarea id="notes" rows="4" placeholder="Coaching points, observations…" style="width:100%"></textarea>
+    </div>
+
+    <div class="row">
+      <button class="ghost" onclick="history.back()">Cancel</button>
+      <button class="primary" id="submitBtn">Submit</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Submitted</div>
+  <script>window.BACKEND_URL = window.BACKEND_URL;</script>
+  <script src="rate.js"></script>
+</body>
+</html>
