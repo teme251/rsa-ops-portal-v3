@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Avis RSA-PMS — Operations Portal</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -21,24 +22,36 @@
       <div class="row">
         <input id="newName" type="text" placeholder="Add associate name" style="flex:1;min-width:220px">
         <select id="newShift">
-          <option>Morning</option><option>Evening</option><option>Overnight</option>
+          <option>Morning</option>
+          <option>Evening</option>
+          <option>Overnight</option>
         </select>
         <button class="primary" id="addBtn">Add RSA</button>
       </div>
       <div class="hr"></div>
       <table class="table">
-        <thead><tr><th>Associate</th><th>Shift</th><th>Actions</th></tr></thead>
+        <thead>
+          <tr><th>Associate</th><th>Shift</th><th>Actions</th></tr>
+        </thead>
         <tbody id="rsaBody"></tbody>
       </table>
       <p id="empty" class="note" style="margin:8px 0 0">No RSAs yet — add someone above.</p>
     </div>
+
     <div class="card">
-      <p class="note">This portal is for managers to rate RSAs on a 1–10 scale across defined categories. Submissions are sent securely to the performance backend and you’ll be returned here after each rating.</p>
+      <p class="note">
+        This portal is for managers to rate RSAs on a 1–10 scale across defined categories.
+        Submissions are sent securely to the performance backend and you’ll be returned here after each rating.
+      </p>
     </div>
   </div>
 
   <div class="toast" id="toast">Saved</div>
-  <script>window.BACKEND_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLinWhJXGQfPcRam2Um9HMezWrnofwp8bBtzWhs7Y15wIeMt5IdbtG79RyIrUDBF2zq2BL7R9cihrxiZkBbjOeTo2df8PYHGSXBDH0sJ_jJXxneW6-vj-B6_51rKuV0R8AgfMkT6AF2lGXnTnBuve9GBMOs4qkHvkP6aa2Muy0PXDVeYTAlfqhH7JHIVgxM4v10WrmYgWDp_gJXQZ5pMvNAsr0Yd2f_gq4iRHv3inI7tMKy3IYKmeG2ypu75LBNFgIbnvQGo06ApKuU_J4txCANWN5J6cJslDy1DwhK5&lib=MqXU_YOUwkJSlkrXDJSXiTrCl4snH-cRe";</script>
+
+  <!-- ✅ UPDATED BACKEND URL -->
+  <script>
+    window.BACKEND_URL = "https://script.google.com/macros/s/AKfycbxdegGrWMt0YlWMic9BURoZPczXgWb4Cx5IiXmEp9hJcUpKwVKpNhHU9khNxTKfRX_-Yw/exec";
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
