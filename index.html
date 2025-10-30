@@ -17,14 +17,14 @@
   </header>
 
   <div class="container">
-    <!-- RSA list & add via dropdown -->
+    <!-- RSA list & add via dropdown OR new name -->
     <div class="card">
       <div class="topbar">
         <h3 style="margin:0">Your RSA List</h3>
         <div class="row">
-          <select id="rsaPicker"></select>
-          <input id="newName" type="text" placeholder="Type new associate name" style="display:none;min-width:220px">
-          <button class="primary" id="addBtn">Add RSA</button>
+          <select id="rsaPicker" title="Pick existing associate"></select>
+          <input id="newName" type="text" placeholder="Or type NEW associate name" style="min-width:220px">
+          <button class="primary" id="addBtn" title="Add to your list">Add RSA</button>
         </div>
       </div>
       <div class="hr"></div>
@@ -33,6 +33,7 @@
         <tbody id="rsaBody"></tbody>
       </table>
       <p id="empty" class="note" style="margin:8px 0 0">No RSAs yet — add someone above.</p>
+      <p class="note" id="hint" style="margin:6px 0 0">Tip: select an existing name from the dropdown <em>or</em> type a new one, then click <b>Add RSA</b>.</p>
     </div>
   </div>
 
