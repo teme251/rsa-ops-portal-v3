@@ -21,24 +21,24 @@
       <div id="who" class="topbar"></div>
     </div>
 
-    <!-- Checklist FIRST, not preselected -->
+    <!-- Checklist FIRST, unchecked -->
     <div class="card">
       <h3 class="section-title">Policy & Customer-First Checklist</h3>
       <p class="note">Check only if completed properly.</p>
       <div id="checklist" class="grid2"></div>
     </div>
 
-    <!-- Category ratings with side-by-side 1–10 -->
+    <!-- Category ratings 1–10 chips with gradient -->
     <div class="card">
       <h3 class="section-title">Category Ratings (1–10)</h3>
       <div id="ratings" class="grid2"></div>
     </div>
 
-    <!-- Customers Served + notes -->
+    <!-- Customers & notes -->
     <div class="card">
-      <h3 class="section-title">Customers Served & Notes</h3>
+      <h3 class="section-title">Customers & Notes</h3>
       <div class="row">
-        <input id="cust" type="number" min="0" step="1" placeholder="Customers served this interaction/day">
+        <input id="cust" type="number" min="1" step="1" value="1" placeholder="Customers counted for this submission (defaults to 1)">
       </div>
       <div class="hr"></div>
       <textarea id="notes" rows="4" placeholder="Coaching points, observations…" style="width:100%"></textarea>
