@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rate RSA — 1–10</title>
+  <title>Rate RSA — Avis RSA-PMS</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
     <div class="header-inner">
       <div class="brand">Avis RSA-PMS<span class="muted">— Rate Associate</span></div>
-      <div class="topnav">
+      <div class="row">
         <button class="ghost" onclick="history.back()">← Back</button>
         <button class="ghost" onclick="location.href='index.html'">🏠 Home</button>
       </div>
@@ -21,18 +21,26 @@
       <div id="who" class="topbar"></div>
     </div>
 
-    <div class="card">
-      <h3 class="section-title">Category Ratings (1–10)</h3>
-      <div id="ratings" class="rating-grid"></div>
-    </div>
-
+    <!-- Checklist FIRST, not preselected -->
     <div class="card">
       <h3 class="section-title">Policy & Customer-First Checklist</h3>
-      <div id="checklist" class="rating-grid"></div>
+      <p class="note">Check only if completed properly.</p>
+      <div id="checklist" class="grid2"></div>
     </div>
 
+    <!-- Category ratings with side-by-side 1–10 -->
     <div class="card">
-      <h3 class="section-title">Notes</h3>
+      <h3 class="section-title">Category Ratings (1–10)</h3>
+      <div id="ratings" class="grid2"></div>
+    </div>
+
+    <!-- Customers Served + notes -->
+    <div class="card">
+      <h3 class="section-title">Customers Served & Notes</h3>
+      <div class="row">
+        <input id="cust" type="number" min="0" step="1" placeholder="Customers served this interaction/day">
+      </div>
+      <div class="hr"></div>
       <textarea id="notes" rows="4" placeholder="Coaching points, observations…" style="width:100%"></textarea>
     </div>
 
@@ -43,7 +51,9 @@
   </div>
 
   <div class="toast" id="toast">Submitted</div>
-  <script>window.BACKEND_URL = window.BACKEND_URL;</script>
+  <script>
+    window.BACKEND_URL = "https://script.google.com/macros/s/AKfycbxdegGrWMt0YlWMic9BURoZPczXgWb4Cx5IiXmEp9hJcUpKwVKpNhHU9khNxTKfRX_-Yw/exec";
+  </script>
   <script src="rate.js"></script>
 </body>
 </html>
