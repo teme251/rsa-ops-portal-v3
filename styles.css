@@ -2,10 +2,10 @@
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#fafafa;color:#111827}
 header{background:#ffffff;border-bottom:1px solid #f1f5f9;position:sticky;top:0;z-index:10}
-.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:12px;justify-content:space-between;padding:14px 16px}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;justify-content:space-between;padding:14px 16px}
 .brand{font-weight:800;font-size:16px;color:#b91c1c}
 .brand .muted{font-weight:600;color:#ef4444;margin-left:6px}
-.container{max-width:1200px;margin:0 auto;padding:16px}
+.container{max-width:1100px;margin:0 auto;padding:16px}
 .card{background:#ffffff;border:1px solid #f1f5f9;border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 input[type="text"],input[type="search"],input[type="number"],select,textarea{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;font-size:14px;color:#111827}
@@ -18,21 +18,26 @@ button.ghost:hover{background:#f8fafc}
 .table th,.table td{padding:12px 10px;border-bottom:1px solid #f1f5f9;text-align:left}
 .table tbody tr:hover{background:#fff1f2}
 .badge{padding:4px 8px;border-radius:999px;background:#fff1f2;border:1px solid #fecaca;color:#b91c1c;font-size:12px}
-.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.kpi{background:#fff;border:1px solid #f1f5f9;border-radius:12px;padding:14px}
-.kpi .label{font-size:12px;color:#6b7280}
-.kpi .value{font-size:22px;margin-top:6px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:900px){.kpis{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
 .toast{position:fixed;right:16px;bottom:16px;background:#b91c1c;color:#fff;padding:12px 14px;border-radius:10px;box-shadow:0 8px 20px rgba(185,28,28,.35);opacity:0;transform:translateY(10px);transition:.2s}
 .toast.show{opacity:1;transform:translateY(0)}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px}
-/* rating chips 1-10 */
-.rate-chips{display:flex;gap:6px;flex-wrap:wrap}
-.rate-chips input{display:none}
-.rate-chips label{border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:8px;padding:8px 10px;min-width:34px;text-align:center;cursor:pointer}
-.rate-chips input:checked+label{background:#ef4444;color:#fff;border-color:#ef4444}
 .hr{height:1px;background:#f1f5f9;margin:10px 0}
 .note{color:#6b7280}
 .section-title{margin:6px 0 12px 0}
 .section-sub{margin:6px 0 6px 0;color:#6b7280}
+
+/* rating chips 1-10 with red->green gradient */
+.rate-chips{display:flex;gap:6px;flex-wrap:wrap}
+.rate-chips input{display:none}
+.rate-chips label{border:1px solid #e5e7eb;background:#fff;color:#111827;border-radius:8px;padding:8px 10px;min-width:34px;text-align:center;cursor:pointer;transition:.1s}
+.rate-chips input:checked+label{color:#fff;border-color:transparent}
+
+/* color utilities for chips */
+.label-c0{background:#ef4444} .label-c1{background:#f2553d}
+.label-c2{background:#f56636} .label-c3{background:#f8772f}
+.label-c4{background:#fb8828} .label-c5{background:#fda821}
+.label-c6{background:#e7c91f} .label-c7{background:#c5da2a}
+.label-c8{background:#9ddd3f} .label-c9{background:#6ede56}
+.label-c10{background:#22c55e}
