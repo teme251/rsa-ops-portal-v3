@@ -1,76 +1,26 @@
-// Ops Portal logic: list management + dashboard summaries from backend
-const LS_KEY = "ops_rsas_v3";
+// Ops Portal v5 — rating only, no dashboards, no shifts
 const API = window.BACKEND_URL;
 const byId = (id)=>document.getElementById(id);
-let RSAS = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
-let RAW = []; // backend rows
 
-function save(){ localStorage.setItem(LS_KEY, JSON.stringify(RSAS)); renderList(); }
-function toast(msg){ const t = byId("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(()=> t.classList.remove("show"), 1200); }
+// Stored lists
+const LS_LIST = "ops_rsas_v5_list";        // the visible/managed RSA list (array of names)
+const LS_MASTER = "ops_rsas_v5_master";    // dropdown master list of associates
 
-async function loadData(){
-  try{
-    const res = await fetch(API, {cache:"no-store"});
-    const json = await res.json();
-    RAW = Array.isArray(json.data) ? json.data : [];
-  }catch(e){ RAW = []; }
-  renderDash();
-}
+let RSAS = JSON.parse(localStorage.getItem(LS_LIST) || "[]");
+let MASTER = JSON.parse(localStorage.getItem(LS_MASTER) || "[]");
 
-function startOfDay(d=new Date()){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
-function daysAgo(n){ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-n); return d; }
+function saveList(){ localStorage.setItem(LS_LIST, JSON.stringify(RSAS)); renderList(); }
+function saveMaster(){ localStorage.setItem(LS_MASTER, JSON.stringify(MASTER)); renderPicker(); }
 
-function renderDash(){
-  const todayRows = RAW.filter(r=> new Date(r.timestamp) >= startOfDay());
-  const todayAvg = avg(todayRows.map(r=> +r.overall||0));
-  const todayCust = todayRows.reduce((a,r)=> a + (+r.customersServed||0), 0);
-
-  byId("kpiTodayCount").textContent = todayRows.length || "0";
-  byId("kpiTodayAvg").textContent = todayRows.length ? todayAvg.toFixed(1) : "—";
-  // Top performer today
-  const top = [...todayRows].sort((a,b)=> (+b.overall||0) - (+a.overall||0))[0];
-  byId("kpiTodayTop").textContent = top ? `${top.name} (${(+top.overall).toFixed(1)})` : "—";
-  byId("kpiTodayCust").textContent = todayCust || "0";
-
-  // Top3 best & worst today
-  const best = [...todayRows].sort((a,b)=> (+b.overall||0)-(+a.overall||0)).slice(0,3);
-  const worst = [...todayRows].sort((a,b)=> (+a.overall||0)-(+b.overall||0)).slice(0,3);
-  fillList("best3", best, true);
-  fillList("worst3", worst, false);
-
-  // Weekly & Monthly summaries (bottom)
-  const weeklyRows = RAW.filter(r=> new Date(r.timestamp) >= daysAgo(7));
-  const monthlyRows = RAW.filter(r=> new Date(r.timestamp) >= daysAgo(30));
-  byId("weeklySummary").textContent = summaryText(weeklyRows);
-  byId("monthlySummary").textContent = summaryText(monthlyRows);
-}
-
-function summaryText(rows){
-  if(!rows.length) return "No ratings in this window.";
-  const a = avg(rows.map(r=> +r.overall||0)).toFixed(1);
-  const top = [...rows].sort((x,y)=> (+y.overall||0)-(+x.overall||0))[0];
-  const nc = rows.filter(r=> (+r.overall||0) < 70).length;
-  const cust = rows.reduce((s,r)=> s+(+r.customersServed||0),0);
-  return `Ratings: ${rows.length} • Avg: ${a} • Top: ${top.name} (${(+top.overall).toFixed(1)}) • Needs Coaching: ${nc} • Customers Served: ${cust}`;
-}
-
-function avg(arr){ return arr.length? arr.reduce((a,b)=>a+b,0)/arr.length:0; }
-function fillList(id, arr, good){
-  const el = byId(id); el.innerHTML="";
-  arr.forEach(r=>{
-    const li = document.createElement("li");
-    li.textContent = `${r.name} — ${(+r.overall||0).toFixed(1)}`;
-    el.appendChild(li);
-  });
-}
+function toast(msg){ const t=byId("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1200); }
 
 function renderList(){
   const q = (byId("search").value||"").toLowerCase();
   const body = byId("rsaBody"); body.innerHTML="";
-  const items = RSAS.filter(r=> r.name.toLowerCase().includes(q));
-  items.forEach((r, idx)=>{
+  const items = RSAS.filter(n=> n.toLowerCase().includes(q));
+  items.forEach((name, idx)=>{
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${r.name}</td><td><span class="badge">${r.shift}</span></td>
+    tr.innerHTML = `<td>${name}</td>
       <td class="actions">
         <button class="primary" data-idx="${idx}" data-action="rate">Rate</button>
         <button class="ghost" data-idx="${idx}" data-action="edit">✏️ Edit</button>
@@ -78,38 +28,89 @@ function renderList(){
       </td>`;
     body.appendChild(tr);
   });
-  byId("empty").style.display = items.length ? "none" : "block";
+  byId("empty").style.display = items.length ? "none":"block";
 }
 
-// events
+function renderPicker(){
+  const sel = byId("rsaPicker");
+  sel.innerHTML = "";
+  const opt0 = new Option("Select existing associate…", "", true, true);
+  sel.appendChild(opt0);
+
+  MASTER.slice().sort((a,b)=>a.localeCompare(b)).forEach(n=>{
+    sel.appendChild(new Option(n, n));
+  });
+  sel.appendChild(new Option("➕ Add new…", "__ADD_NEW__"));
+}
+
+byId("rsaPicker").addEventListener("change", (e)=>{
+  const val = e.target.value;
+  const nameInput = byId("newName");
+  if(val === "__ADD_NEW__"){
+    nameInput.style.display = "inline-block";
+    nameInput.focus();
+  } else {
+    nameInput.style.display = "none";
+    nameInput.value = "";
+  }
+});
+
 byId("addBtn").addEventListener("click", ()=>{
-  const name = byId("newName").value.trim();
-  const shift = byId("newShift").value;
-  if(!name) return alert("Enter a name");
-  RSAS.push({name, shift});
+  const selVal = byId("rsaPicker").value;
+  let name = selVal;
+  if(selVal === "__ADD_NEW__"){
+    name = (byId("newName").value||"").trim();
+    if(!name) return alert("Enter a new associate name.");
+    // add to MASTER if not exists
+    if(!MASTER.map(x=>x.toLowerCase()).includes(name.toLowerCase())){
+      MASTER.push(name);
+      saveMaster();
+    }
+  }
+  if(!name) return alert("Pick an associate or add a new one.");
+
+  // prevent duplicates in visible list
+  if(RSAS.map(x=>x.toLowerCase()).includes(name.toLowerCase()))
+    return alert("This associate is already in your list.");
+
+  RSAS.push(name);
+  saveList();
+  byId("rsaPicker").value = "";
   byId("newName").value = "";
-  save();
+  byId("newName").style.display = "none";
+  toast("Added");
 });
 
 byId("rsaBody").addEventListener("click", (e)=>{
   const btn = e.target.closest("button"); if(!btn) return;
   const idx = +btn.dataset.idx; const action = btn.dataset.action;
   if(action==="rate"){
-    sessionStorage.setItem("current_rsa_v4", JSON.stringify(RSAS[idx]));
+    const name = RSAS[idx];
+    sessionStorage.setItem("current_rsa_v5", JSON.stringify({name}));
     location.href = "rate.html";
   }
   if(action==="edit"){
-    const newName = prompt("Edit name:", RSAS[idx].name);
-    if(newName && newName.trim()){ RSAS[idx].name = newName.trim(); save(); toast("Updated"); }
+    const curr = RSAS[idx];
+    const newName = prompt("Edit name:", curr);
+    if(newName && newName.trim()){
+      if(RSAS.some((n,i)=> i!==idx && n.toLowerCase()===newName.trim().toLowerCase()))
+        return alert("Duplicate name not allowed.");
+      RSAS[idx] = newName.trim();
+      saveList(); toast("Updated");
+      // maintain MASTER too
+      if(!MASTER.map(x=>x.toLowerCase()).includes(newName.toLowerCase())){
+        MASTER.push(newName.trim()); saveMaster();
+      }
+    }
   }
   if(action==="remove"){
-    if(confirm("Remove this RSA from your list?")){ RSAS.splice(idx,1); save(); toast("Removed"); }
+    if(confirm("Remove this RSA from your list?")){ RSAS.splice(idx,1); saveList(); toast("Removed"); }
   }
 });
 
 byId("search").addEventListener("input", renderList);
 
-// init
+// init first run: create MASTER from RSAS if empty
+if(MASTER.length===0 && RSAS.length>0){ MASTER = [...RSAS]; saveMaster(); }
+renderPicker();
 renderList();
-loadData();
-setInterval(loadData, 5*60*1000);
