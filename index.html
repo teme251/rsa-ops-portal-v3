@@ -1,23 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Avis RSA-PMS — Operations Portal</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSA Performance Metrics System — Operations Portal</title>
+  <meta name="description" content="Personal prototype: frontline operations portal. No confidential company data is used.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script>
+    /* Google Apps Script backend (unchanged from your system) */
     window.BACKEND_URL = "https://script.google.com/macros/s/AKfycbxdegGrWMt0YlWMic9BURoZPczXgWb4Cx5IiXmEp9hJcUpKwVKpNhHU9khNxTKfRX_-Yw/exec";
   </script>
 </head>
 <body>
-  <header>
+
+  <div class="disclaimer-strip">
+    Personal prototype for demonstration purposes. No confidential company data is used.
+  </div>
+
+  <header class="site-header">
     <div class="header-inner">
-      <div class="brand">Avis RSA-PMS<span class="muted">— Operations Portal</span></div>
-      <input id="search" type="search" placeholder="Search RSA…">
+      <div class="brand">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="32" height="32">
+            <rect x="5" y="16" width="5" height="11" rx="1.5"></rect>
+            <rect x="13.5" y="10" width="5" height="17" rx="1.5"></rect>
+            <rect x="22" y="5" width="5" height="22" rx="1.5"></rect>
+          </svg>
+        </span>
+        <div class="brand-text">
+          <h1>RSA Performance Metrics System</h1>
+          <p class="subtitle">Operations Portal</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <input id="search" type="search" placeholder="Search RSA…">
+      </div>
     </div>
   </header>
 
   <div class="container">
-    <!-- RSA list & add via dropdown OR new name -->
     <div class="card">
       <div class="topbar">
         <h3 style="margin:0">Your RSA List</h3>
@@ -33,11 +57,139 @@
         <tbody id="rsaBody"></tbody>
       </table>
       <p id="empty" class="note" style="margin:8px 0 0">No RSAs yet — add someone above.</p>
-      <p class="note" id="hint" style="margin:6px 0 0">Tip: select an existing name from the dropdown <em>or</em> type a new one, then click <b>Add RSA</b>.</p>
+      <p class="note" id="hint" style="margin:6px 0 0">Tip: select an existing name from the dropdown <em>or</em> type a new one, then click <b>Add RSA</b>. Use <b>Rate</b> to score an associate.</p>
     </div>
   </div>
 
+  <footer class="site-footer">
+    <p><strong>RSA Performance Metrics System</strong> — a personal prototype for AI-enabled operations performance coaching.</p>
+    <p class="fine">Inspired by frontline rental car operations. Not an official product of, and not affiliated with, any company.</p>
+  </footer>
+
   <div class="toast" id="toast">Saved</div>
-  <script src="app.js"></script>
+
+  <script>
+  /* ===== Operations Portal logic (your app.js, unchanged behaviour) ===== */
+  const API = window.BACKEND_URL;
+  const byId = (id)=>document.getElementById(id);
+
+  const LS_LIST   = "ops_rsas_v5_list";
+  const LS_MASTER = "ops_rsas_v5_master";
+
+  let RSAS   = JSON.parse(localStorage.getItem(LS_LIST)   || "[]");
+  let MASTER = JSON.parse(localStorage.getItem(LS_MASTER) || "[]");
+
+  const norm = s => (s||"").trim();
+  const key  = s => norm(s).toLowerCase();
+  const uniqueMerge = (...arrays) => {
+    const seen = new Set(), out=[];
+    arrays.flat().forEach(n=>{
+      const k = key(n);
+      if(k && !seen.has(k)){ seen.add(k); out.push(norm(n)); }
+    });
+    return out;
+  };
+
+  function saveList(){ localStorage.setItem(LS_LIST, JSON.stringify(RSAS)); renderList(); }
+  function saveMaster(){ localStorage.setItem(LS_MASTER, JSON.stringify(MASTER)); renderPicker(); }
+  function toast(msg){ const t=byId("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1400); }
+
+  function renderPicker(){
+    const sel = byId("rsaPicker");
+    sel.innerHTML = "";
+    sel.appendChild(new Option("— Select existing —", ""));
+    MASTER.slice().sort((a,b)=>a.localeCompare(b)).forEach(n=>{
+      sel.appendChild(new Option(n, n));
+    });
+  }
+
+  function renderList(){
+    const q = (byId("search").value||"").toLowerCase();
+    const body = byId("rsaBody"); body.innerHTML="";
+    const items = RSAS.filter(n=> n.toLowerCase().includes(q));
+    items.forEach((name, idx)=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${name}</td>
+        <td class="actions">
+          <button class="primary" data-idx="${idx}" data-action="rate">Rate</button>
+          <button class="ghost" data-idx="${idx}" data-action="edit">Edit</button>
+          <button class="ghost" data-idx="${idx}" data-action="remove">Remove</button>
+        </td>`;
+      body.appendChild(tr);
+    });
+    byId("empty").style.display = items.length ? "none" : "block";
+  }
+
+  function handleAdd(){
+    const selVal  = norm(byId("rsaPicker").value);
+    const typed   = norm(byId("newName").value);
+    const chosen = typed || selVal;
+    if(!chosen){
+      alert("Pick an existing associate from the dropdown OR type a new name.");
+      return;
+    }
+    if(RSAS.some(n=> key(n)===key(chosen))){
+      alert("This associate is already in your list.");
+      return;
+    }
+    if(!MASTER.some(n=> key(n)===key(chosen))){
+      MASTER.push(chosen);
+      saveMaster();
+    }
+    RSAS.push(chosen);
+    saveList();
+    byId("rsaPicker").value = "";
+    byId("newName").value = "";
+    toast("Added");
+  }
+
+  async function bootstrapMasterFromBackend(){
+    try{
+      const res = await fetch(API, {cache:"no-store"});
+      const json = await res.json();
+      const rows = Array.isArray(json.data) ? json.data : [];
+      const backendNames = uniqueMerge(rows.map(r=> r.name || ""));
+      MASTER = uniqueMerge(MASTER, RSAS, backendNames);
+      saveMaster();
+    }catch(e){
+      renderPicker();
+    }
+  }
+
+  byId("addBtn").addEventListener("click", handleAdd);
+  byId("newName").addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ e.preventDefault(); handleAdd(); } });
+  byId("rsaBody").addEventListener("click", (e)=>{
+    const btn = e.target.closest("button"); if(!btn) return;
+    const idx = +btn.dataset.idx; const action = btn.dataset.action;
+    if(action==="rate"){
+      const name = RSAS[idx];
+      sessionStorage.setItem("current_rsa_v5", JSON.stringify({name}));
+      location.href = "rate.html";
+    }
+    if(action==="edit"){
+      const curr = RSAS[idx];
+      const newName = norm(prompt("Edit name:", curr));
+      if(newName){
+        if(RSAS.some((n,i)=> i!==idx && key(n)===key(newName))){
+          alert("Duplicate name not allowed."); return;
+        }
+        RSAS[idx] = newName; saveList(); toast("Updated");
+        if(!MASTER.some(n=> key(n)===key(newName))){ MASTER.push(newName); saveMaster(); }
+      }
+    }
+    if(action==="remove"){
+      if(confirm("Remove this RSA from your list?")){ RSAS.splice(idx,1); saveList(); toast("Removed"); }
+    }
+  });
+  byId("search").addEventListener("input", renderList);
+
+  (function init(){
+    if(MASTER.length===0 && RSAS.length>0){ MASTER = uniqueMerge(RSAS); saveMaster(); }
+    renderPicker();
+    renderList();
+    bootstrapMasterFromBackend();
+  })();
+  </script>
 </body>
 </html>
