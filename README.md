@@ -1,6 +1,13 @@
-# Frontline rating portal prototype
+# RSA Operations Portal — Structured Observation & Assessment
 
-A personal front-end prototype for recording structured service observations. It demonstrates an associate list, a rating form, a seven-item checklist, and a weighted score. This repository contains no confidential company records.
+A front-end application prototype for structured service-observation capture. The workflow connects associate selection, six category ratings, a seven-item checklist, notes, customer count, and a weighted score within a consistent assessment interface. This repository contains no confidential company records.
+
+
+## Engineering focus
+
+The project translates an observation workflow into structured inputs and a defined JSON submission contract. Browser state maintains the associate list, while the assessment form collects the information needed by a compatible backend. The engineering emphasis is consistency between interaction, captured fields, and the submission payload.
+
+[Read the portfolio case study](https://teme251.github.io/teme251/project-rsa.html)
 
 ## Implementation
 
